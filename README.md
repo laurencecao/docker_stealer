@@ -109,15 +109,11 @@ docker-pull --insecure registry.local:5000/app:latest
 ### Load pulled image into Docker
 
 ```bash
-# Default output is a directory (tmp_<image>_<tag>/)
-# Use --tar flag or manually create archive:
+# The tool creates a tar archive compatible with docker load
+docker load -i nginx_latest.tar
 
-# Option 1: The tool creates a directory structure compatible with docker load
-docker load < tmp_nginx_latest/
-
-# Option 2: Create tar manually
-tar cf image.tar -C . tmp_nginx_latest/
-docker load < image.tar
+# Or load from stdin
+docker load < nginx_latest.tar
 ```
 
 ## Flags

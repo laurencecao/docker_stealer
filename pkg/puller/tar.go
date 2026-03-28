@@ -10,6 +10,7 @@ import (
 
 // createTarArchive creates a Docker-compatible tar archive from a directory.
 // This uses Go's archive/tar for cross-platform compatibility.
+// The archive contents are placed at the root (like Python's arcname=os.path.sep).
 func createTarArchive(sourceDir, tarPath string) error {
 	outFile, err := os.Create(tarPath)
 	if err != nil {
@@ -20,22 +21,23 @@ func createTarArchive(sourceDir, tarPath string) error {
 	tw := tar.NewWriter(outFile)
 	defer tw.Close()
 
-	baseDir := filepath.Base(sourceDir)
-
 	return filepath.Walk(sourceDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		// Get relative path
 		relPath, err := filepath.Rel(sourceDir, path)
 		if err != nil {
 			return err
 		}
 
+		// Skip the root directory itself
+		if relPath == "." {
+			return nil
+		}
+
 		// Convert to forward slashes (tar standard)
-		headerName := filepath.Join(baseDir, relPath)
-		headerName = strings.ReplaceAll(headerName, "\\", "/")
+		headerName := strings.ReplaceAll(relPath, "\\", "/")
 
 		// Create tar header
 		header, err := tar.FileInfoHeader(info, "")

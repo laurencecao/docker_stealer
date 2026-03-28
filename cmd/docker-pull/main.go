@@ -102,16 +102,13 @@ func runPull(cmd *cobra.Command, args []string) error {
 		opts.OnProgress = makeProgressPrinter()
 	}
 
-	result, err := puller.Pull(opts)
+	tarPath, err := puller.PullAsTar(opts)
 	if err != nil {
 		return err
 	}
 
 	if !quiet {
-		fmt.Printf("\nDone! Image saved to: %s\n", result.ImageDir)
-		if result.Resumed {
-			fmt.Printf("(Resumed from checkpoint)\n")
-		}
+		fmt.Printf("\nDone! Image saved to: %s\n", tarPath)
 	}
 
 	return nil
@@ -138,13 +135,13 @@ func runResume() error {
 		opts.OnProgress = makeProgressPrinter()
 	}
 
-	result, err := puller.Pull(opts)
+	tarPath, err := puller.PullAsTar(opts)
 	if err != nil {
 		return err
 	}
 
 	if !quiet {
-		fmt.Printf("\nDone! Image saved to: %s\n", result.ImageDir)
+		fmt.Printf("\nDone! Image saved to: %s\n", tarPath)
 	}
 
 	return nil
